@@ -9,14 +9,14 @@ export const addTask = async (text: string) => {
     text,
     createdAt: Date.now()
   });
-  return docRef.id; // 🔥 Aquí obtenemos el ID del documento
+  return docRef.id;
 };
 
 // 🔹 Obtener tareas con su ID
 export const getAllTasks = async () => {
   const q = query(tasksCollection, orderBy("createdAt", "asc"));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // 🔥 Incluimos el ID
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
 // 🔹 Eliminar la tarea más antigua (FIFO)
@@ -25,6 +25,6 @@ export const removeOldestTask = async () => {
   const querySnapshot = await getDocs(q);
   if (!querySnapshot.empty) {
     const oldestTask = querySnapshot.docs[0];
-    await deleteDoc(doc(db, "tasks", oldestTask.id)); // 🔥 Usamos el ID para eliminar
+    await deleteDoc(doc(db, "tasks", oldestTask.id)); 
   }
 };
