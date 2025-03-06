@@ -1,5 +1,5 @@
 import { db } from "./firebaseConfig";
-import { collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, limit } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, limit, writeBatch } from "firebase/firestore";
 
 const tasksCollection = collection(db, "tasks");
 
@@ -28,3 +28,14 @@ export const removeOldestTask = async () => {
     await deleteDoc(doc(db, "tasks", oldestTask.id)); 
   }
 };
+
+// 🔹 Eliminar todas las tareas
+export const removeAllTasks = async (collectionName: string) => {
+    const tasksCollection = collection(db, collectionName);
+    const querySnapshot = await getDocs(tasksCollection);
+    const batch = writeBatch(db);
+    querySnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+  };
