@@ -3,9 +3,9 @@ import Table  from './components/Table'
 function App() {
 
   return (
-    <main className='h-screen flex justify-center items-center'>
-      <body className='bg-slate-900'>
-      <Table />
+    <main className="flex flex-col h-screen w-screen justify-center items-center bg-slate-800">
+      <body className="flex flex-col justify-center items-center w-full h-full">
+        <Table />
       </body>
     </main>
   );
