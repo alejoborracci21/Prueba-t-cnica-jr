@@ -13,6 +13,7 @@ export default function Register() {
     try {
       await registerUser(email, password);
       alert('Usuario registrado');
+      navigate('/login');
     } catch (error) {
       if (error === 'auth/email-already-in-use') {
         setError('El correo ya está en uso.');

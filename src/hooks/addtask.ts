@@ -2,16 +2,16 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
 
-export default async function addtask(text: string) {
+export default async function addtask(name: string, description: string) {
     const tasksCollection = collection(db, "tasks");
     try {
         await addDoc(tasksCollection, {
-            text,
+            name,
+            description,
             createdAt: Date.now()
         });
-        return 'tarea agregada'
+        return 'Tarea agregada'
     } catch (error) {
         return error
     }
-    return 
     }

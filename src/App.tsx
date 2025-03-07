@@ -1,14 +1,20 @@
-import Table  from './components/Table'
+import TaskList from "./components/Task-list"
+import AddTaskForm from "./components/Add-task-form"
 
-function App() {
-
+export default function Home() {
   return (
-    <main className="flex flex-col h-screen w-screen justify-center items-center bg-slate-800">
-      <body className="flex flex-col justify-center items-center w-full h-full">
-        <Table />
-      </body>
+    <main className="min-h-screen bg-gray-100">
+      <header className="bg-black text-white p-4">
+        <h1 className="text-sm font-medium">Tasks table</h1>
+      </header>
+      <div className="flex flex-col md:flex-row p-4 gap-4">
+        <div className="w-full md:w-1/2 bg-white rounded-lg shadow-sm p-6">
+          <TaskList />
+        </div>
+        <div className="w-full md:w-1/2 bg-white rounded-lg shadow-sm p-6">
+          <AddTaskForm />
+        </div>
+      </div>
     </main>
-  );
+  )
 }
-
-export default App

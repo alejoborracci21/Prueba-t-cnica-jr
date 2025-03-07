@@ -1,12 +1,20 @@
 import { db } from "./firebaseConfig";
-import { collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, limit, writeBatch } from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc, orderBy, limit, deleteDoc, doc, writeBatch } from "firebase/firestore";
 
 const tasksCollection = collection(db, "tasks");
 
+// 🔹 Validar si una tarea ya existe
+export const isTaskDuplicate = async (name: string, description: string): Promise<boolean> => {
+  const q = query(tasksCollection, where("name", "==", name), where("description", "==", description));
+  const querySnapshot = await getDocs(q);
+  return !querySnapshot.empty;
+};
+
 // 🔹 Agregar una tarea y devolver su ID
-export const addTask = async (text: string) => {
+export const addTask = async (name: string, description: string) => {
   const docRef = await addDoc(tasksCollection, {
-    text,
+    name,
+    description,
     createdAt: Date.now()
   });
   return docRef.id;
@@ -40,13 +48,11 @@ export const removeAllTasks = async (collectionName: string) => {
     await batch.commit();
   };
 
-
 export const deleteTask = async (id: string) => {
     await deleteDoc(doc(db, "tasks", id));
-  }
+  };
 
-
-  import { auth } from "../firebase/firebaseConfig";
+import { auth } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export const registerUser = async (email: string, password: string) => {
