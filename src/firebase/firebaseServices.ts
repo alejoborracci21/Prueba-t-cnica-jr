@@ -39,3 +39,8 @@ export const removeAllTasks = async (collectionName: string) => {
     });
     await batch.commit();
   };
+
+
+export const deleteTask = async (id: string) => {
+    await deleteDoc(doc(db, "tasks", id));
+  }
