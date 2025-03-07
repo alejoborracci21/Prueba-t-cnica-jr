@@ -44,3 +44,12 @@ export const removeAllTasks = async (collectionName: string) => {
 export const deleteTask = async (id: string) => {
     await deleteDoc(doc(db, "tasks", id));
   }
+
+
+  import { auth } from "../firebase/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
+export const registerUser = async (email: string, password: string) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+};

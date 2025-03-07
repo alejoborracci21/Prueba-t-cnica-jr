@@ -5,6 +5,7 @@ import { auth } from '../firebase/firebaseConfig';
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const [user, loading] = useAuthState(auth);
 
+  
   if (loading) {
     return <div>Loading...</div>;
   }
