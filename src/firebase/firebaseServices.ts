@@ -19,7 +19,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 
 
-
+// 1 - Un servicio que traiga el UID del usuario
 const getUserUid = (): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -32,6 +32,11 @@ const getUserUid = (): Promise<string | null> => {
     }, reject);
   });
 };
+
+// 2 - Un servicio que reciba un UID y cree una colección con ese UID 
+const createCollection = async (uid: string) => {
+}
+
 
 // 🔹 Validar si una tarea ya existe
 export const isTaskDuplicate = async (name: string, description: string): Promise<boolean> => {
