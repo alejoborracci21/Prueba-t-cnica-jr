@@ -20,7 +20,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 
 // 1 - Un servicio que traiga el UID del usuario
-const getUserUid = (): Promise<string | null> => {
+export const getUserUid = (): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -32,54 +32,34 @@ const getUserUid = (): Promise<string | null> => {
     }, reject);
   });
 };
-
 // 2 - Un servicio que reciba un UID y cree una colección con ese UID 
-const createCollection = async (uid: string) => {
-}
-
-
-// 🔹 Validar si una tarea ya existe
-export const isTaskDuplicate = async (name: string, description: string): Promise<boolean> => {
-  const uid = await getUserUid();
-  if (!uid) throw new Error("User not authenticated");
-
-  const tasksCollection = collection(db, `${uid}/tasks`);
-  const q = query(tasksCollection, where("name", "==", name), where("description", "==", description));
-  const querySnapshot = await getDocs(q);
-  return !querySnapshot.empty;
+export const createCollection = async (uid: string) => {
+  const tasksCollection = collection(db, `users/${uid}/tasks`);
+  // No es necesario crear explícitamente la colección, Firestore la crea automáticamente cuando se agrega el primer documento.
+  return tasksCollection;
 };
 
-// 🔹 Agregar una tarea y devolver su ID
+// 3 - Un servicio que reciba (UID , task y descripción) y cree dentro de la colección que coincida con ese UID una task con la descripción y el nombre que recibe por parámetro
 export const addTask = async (name: string, description: string) => {
   const uid = await getUserUid();
   if (!uid) throw new Error("User not authenticated");
 
-  const tasksCollection = collection(db, `${uid}/${name}`);
+  const tasksCollection = collection(db, `users/${uid}/tasks`);
   const docRef = await addDoc(tasksCollection, {
     name,
     description,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    completed: false
   });
   return docRef.id;
 };
 
-// 🔹 Obtener tareas con su ID
-export const getAllTasks = async () => {
-  const uid = await getUserUid();
-  if (!uid) throw new Error("User not authenticated");
-
-  const tasksCollection = collection(db, `${uid}/tasks`);
-  const q = query(tasksCollection, orderBy("createdAt", "asc"));
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-};
-
-// 🔹 Eliminar la tarea más antigua (FIFO)
+// 4 - Un servicio que reciba un UID y elimine la ultima task de esa colección
 export const removeOldestTask = async () => {
   const uid = await getUserUid();
   if (!uid) throw new Error("User not authenticated");
 
-  const tasksCollection = collection(db, `${uid}/tasks`);
+  const tasksCollection = collection(db, `users/${uid}/tasks`);
   const q = query(tasksCollection, orderBy("createdAt", "asc"), limit(1));
   const querySnapshot = await getDocs(q);
   if (!querySnapshot.empty) {
@@ -88,12 +68,35 @@ export const removeOldestTask = async () => {
   }
 };
 
-// 🔹 Eliminar todas las tareas
+// 5 - Un servicio que reciba un UID y traiga todas las tareas de esa coleccion
+export const getAllTasks = async () => {
+  const uid = await getUserUid();
+  if (!uid) throw new Error("User not authenticated");
+
+  const tasksCollection = collection(db, `users/${uid}/tasks`);
+  const q = query(tasksCollection, orderBy("createdAt", "asc"));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+// 6 - Un servicio que reciba un (UID, nombre) vaya a la coleccion y verifique esa task no se repite
+export const isTaskDuplicate = async (name: string, description: string): Promise<boolean> => {
+  const uid = await getUserUid();
+  if (!uid) throw new Error("User not authenticated");
+
+  const tasksCollection = collection(db, `users/${uid}/tasks`);
+  const q = query(tasksCollection, where("name", "==", name), where("description", "==", description));
+  const querySnapshot = await getDocs(q);
+  return !querySnapshot.empty;
+};
+
+// Eliminar todas las tareas
+//? No se si lo voy a necesitar
 export const removeAllTasks = async () => {
   const uid = await getUserUid();
   if (!uid) throw new Error("User not authenticated");
 
-  const tasksCollection = collection(db, `${uid}/tasks`);
+  const tasksCollection = collection(db, `users/${uid}/tasks`);
   const querySnapshot = await getDocs(tasksCollection);
   const batch = writeBatch(db);
   querySnapshot.docs.forEach(doc => {
