@@ -13,17 +13,21 @@ export default function Login() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      alert('Usuario autenticado');
-      navigate('/'); // Redirigir a la página principal después del inicio de sesión exitoso
+      alert('User authenticated');
+      navigate('/'); // Redirect to the main page after successful login
     } catch (error) {
       if (error === 'auth/user-not-found') {
-        setError('Usuario no encontrado.');
+        setError('User not found.');
       } else if (error === 'auth/wrong-password') {
-        setError('Contraseña incorrecta.');
+        setError('Incorrect password.');
       } else {
-        setError('Error al iniciar sesión. Verifica tus credenciales.');
+        setError('Error logging in. Please check your credentials.');
       }
     }
+  };
+
+  const handleIncognito = () => {
+    navigate('/'); // Redirect to the main page in incognito mode
   };
 
   return (
@@ -51,9 +55,12 @@ export default function Login() {
           />
         </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        <p>¿No tienes cuenta? <button type="button" className='text-blue-600 p-3' onClick={() => navigate('/register')}>Regístrate</button></p>
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+        <p>Don't have an account? <button type="button" className='text-blue-600 p-3' onClick={() => navigate('/register')}>Register</button></p>
+        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 mb-4">
           Login
+        </button>
+        <button type="button" className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600" onClick={handleIncognito}>
+          Open in private mode
         </button>
       </form>
     </div>

@@ -5,7 +5,9 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import { isTaskDuplicate, addTask } from "../firebase/firebaseServices"
-import { useTaskContext } from "../context/TaskContext"
+import { useTaskContext } from "../context/useContext"
+import { getUserUid } from "../firebase/firebaseServices"
+import { addTaskToLocalStorage } from "../hooks/storageServices"
 
 export default function AddTaskForm({ onClose }: { onClose: () => void }) {
   const [taskName, setTaskName] = useState("")
@@ -16,16 +18,40 @@ export default function AddTaskForm({ onClose }: { onClose: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    const userId = await getUserUid()
+
+    if (!userId) {
+      // Agregar la tarea al localStorage
+      const newTask = {
+        id: Date.now().toString(),
+        name: taskName,
+        description,
+        createdAt: Date.now(),
+        completed: false,
+      };
+      addTaskToLocalStorage(newTask);
+
+      // Agregar la tarea al contexto
+      addTaskToContext(newTask);
+
+      // Limpiar el formulario
+      setTaskName("");
+      setDescription("");
+      setError("");
+      onClose();
+      return;
+    }
+
     // Validar que el nombre y la descripción no se repitan
-    const isDuplicate = await isTaskDuplicate(taskName, description)
+    const isDuplicate = await isTaskDuplicate(taskName, description);
 
     if (isDuplicate) {
-      setError("El nombre o la descripción de la tarea ya existe.")
-      return
+      setError("The task name or description already exists.");
+      return;
     }
 
     // Agregar la tarea a Firestore
-    const newTaskId = await addTask(taskName, description)
+    const newTaskId = await addTask(taskName, description) as string
 
     // Agregar la tarea al contexto
     addTaskToContext({ id: newTaskId, name: taskName, description, createdAt: Date.now(), completed: false })
