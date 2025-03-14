@@ -1,9 +1,19 @@
-import { useState } from "react";
-import { getAuth, signOut } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
 
 export default function UserMenu() {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const auth = getAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, [auth]);
 
   const handleToggleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -11,11 +21,14 @@ export default function UserMenu() {
 
   const handleLogout = () => {
     signOut(auth);
-    console.log("Cerrar sesión");
+    navigate('/login');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
   };
 
   const handleViewHistory = () => {
-    // Lógica para ver historial
     console.log("Ver historial");
   };
 
@@ -34,18 +47,29 @@ export default function UserMenu() {
       {showDropdown && (
         <div className="absolute top-20 right-4 bg-white shadow-md rounded-lg w-48">
           <ul className="py-2">
-            <li
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={handleLogout}
-            >
-              Cerrar sesión
-            </li>
-            <li
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={handleViewHistory}
-            >
-              Ver historial
-            </li>
+            {isLoggedIn ? (
+              <>
+                <li
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  Cerrar sesión
+                </li>
+              </>
+            ) : (
+              <li
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={handleLogin}
+              >
+                Iniciar sesión
+              </li>
+            )}
+                <li
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={handleViewHistory}
+                >
+                  Ver historial
+                </li>
           </ul>
         </div>
       )}
