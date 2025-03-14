@@ -6,6 +6,7 @@ import { completeTasks, getUserUid } from "../firebase/firebaseServices"
 import { Task } from "../interfaces/tasks"
 import { getAllTasksFromLocalStorage } from "../hooks/storageServices"
 import { useTaskContext } from "../context/useContext"
+
 export default function TaskList() {
   const { tasks, setTasks, refreshTasks } = useTaskContext();
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
@@ -16,7 +17,7 @@ export default function TaskList() {
       const userId = await getUserUid();
       if (userId) {
         // Si el usuario está autenticado, cargar las tareas desde Firestore
-        refreshTasks();
+        await refreshTasks();
       } else {
         // Si el usuario no está autenticado, cargar las tareas desde el localStorage
         const tasksFromLocalStorage = getAllTasksFromLocalStorage();
@@ -25,14 +26,14 @@ export default function TaskList() {
     };
 
     loadTasks();
-  }, [refreshTasks, setTasks]);
+  }, [setTasks, refreshTasks]);
 
   const handleCompleteTask = async (taskId: string) => {
     const userId = await getUserUid();
     if (userId) {
       // Si el usuario está autenticado, completar la tarea en Firestore
       await completeTasks([taskId]);
-      refreshTasks();
+      await refreshTasks();
     } else {
       // Si el usuario no está autenticado, completar la tarea en el localStorage
       const tasksFromLocalStorage = getAllTasksFromLocalStorage();
@@ -64,19 +65,17 @@ export default function TaskList() {
               </tr>
             </thead>
             <tbody>
-              {incompleteTasks.map((task, index) => (
+              {incompleteTasks.map((task) => (
                 <tr key={task.id} className="hover:bg-[#ffe5e0]">
                   <td className="py-2 px-4 border-b border-gray-300 w-12 text-center">
-                    {index === 0 && (
-                      <input
-                        type="checkbox"
-                        checked={selectedTaskId === task.id}
-                        onChange={() => {
-                          setSelectedTaskId(task.id);
-                          handleCompleteTask(task.id);
-                        }}
-                      />
-                    )}
+                    <input
+                      type="checkbox"
+                      checked={selectedTaskId === task.id}
+                      onChange={() => {
+                        setSelectedTaskId(task.id);
+                        handleCompleteTask(task.id);
+                      }}
+                    />
                   </td>
                   <td className="py-2 px-4 border-b border-gray-300 text-center">{task.name}</td>
                   <td className="py-2 px-4 border-b border-gray-300 text-center">{task.description}</td>

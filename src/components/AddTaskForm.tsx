@@ -57,7 +57,7 @@ export default function AddTaskForm({ onClose }: { onClose: () => void }) {
     addTaskToContext({ id: newTaskId, name: taskName, description, createdAt: Date.now(), completed: false })
 
     // Refrescar las tareas desde Firestore
-    refreshTasks();
+    await refreshTasks();
 
     // Limpiar el formulario
     setTaskName("")
