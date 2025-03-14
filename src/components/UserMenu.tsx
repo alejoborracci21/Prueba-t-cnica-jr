@@ -21,11 +21,11 @@ export default function UserMenu() {
 
   const handleLogout = () => {
     signOut(auth);
-    navigate('/login');
+    navigate('/');
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate('/');
   };
 
   const handleViewHistory = () => {

@@ -13,7 +13,7 @@ export default function Register() {
     try {
       await registerUser(email, password);
       alert('Usuario registrado');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       if (error === 'auth/email-already-in-use') {
         setError('El correo ya está en uso.');
@@ -48,7 +48,7 @@ export default function Register() {
           />
         </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        <p>¿Ya tienes cuenta? <button type="button" className='text-blue-600 p-3' onClick={() => navigate('/login')}>Inicia sesión</button></p>
+        <p>¿Ya tienes cuenta? <button type="button" className='text-blue-600 p-3' onClick={() => navigate('/')}>Inicia sesión</button></p>
         <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
           Register
         </button>

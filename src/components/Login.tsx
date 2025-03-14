@@ -14,7 +14,7 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('User authenticated');
-      navigate('/'); // Redirect to the main page after successful login
+      navigate('/home'); 
     } catch (error) {
       if (error === 'auth/user-not-found') {
         setError('User not found.');
@@ -27,7 +27,7 @@ export default function Login() {
   };
 
   const handleIncognito = () => {
-    navigate('/'); // Redirect to the main page in incognito mode
+    navigate('/home'); // Redirect to the main page in incognito mode
   };
 
   return (
