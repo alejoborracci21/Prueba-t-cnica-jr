@@ -53,7 +53,7 @@ export default function UserMenu() {
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={handleLogout}
                 >
-                  Cerrar sesión
+                  Logout
                 </li>
               </>
             ) : (
@@ -61,15 +61,15 @@ export default function UserMenu() {
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                 onClick={handleLogin}
               >
-                Iniciar sesión
+                Login
               </li>
             )}
-                <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={handleViewHistory}
-                >
-                  Ver historial
-                </li>
+            <li
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={handleViewHistory}
+            >
+              View history
+            </li>
           </ul>
         </div>
       )}
