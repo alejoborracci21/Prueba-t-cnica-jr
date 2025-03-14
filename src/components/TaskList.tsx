@@ -65,17 +65,19 @@ export default function TaskList() {
               </tr>
             </thead>
             <tbody>
-              {incompleteTasks.map((task) => (
+              {incompleteTasks.map((task, index) => (
                 <tr key={task.id} className="hover:bg-[#ffe5e0]">
                   <td className="py-2 px-4 border-b border-gray-300 w-12 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedTaskId === task.id}
-                      onChange={() => {
-                        setSelectedTaskId(task.id);
-                        handleCompleteTask(task.id);
-                      }}
-                    />
+                    {index === 0 && (
+                      <input
+                        type="checkbox"
+                        checked={selectedTaskId === task.id}
+                        onChange={() => {
+                          setSelectedTaskId(task.id);
+                          handleCompleteTask(task.id);
+                        }}
+                      />
+                    )}
                   </td>
                   <td className="py-2 px-4 border-b border-gray-300 text-center">{task.name}</td>
                   <td className="py-2 px-4 border-b border-gray-300 text-center">{task.description}</td>
